@@ -260,7 +260,10 @@ function parseBody(e) {
 }
 
 function jsonResponse(payload, statusCode) {
-  const body = Object.assign({ statusCode: statusCode || 200 }, payload);
+  // If payload is an array, Object.assign would convert it into {"0":..., "1":...}.
+  // Wrap arrays under a stable "data" key to keep JSON shape predictable.
+  const base = { statusCode: statusCode || 200 };
+  const body = Array.isArray(payload) ? Object.assign(base, { data: payload }) : Object.assign(base, payload);
   return ContentService.createTextOutput(JSON.stringify(body)).setMimeType(ContentService.MimeType.JSON);
 }
 

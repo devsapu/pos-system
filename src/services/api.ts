@@ -34,7 +34,8 @@ export function hasApiUrl(): boolean {
 }
 
 export async function getItems(): Promise<InventoryItem[]> {
-  return requestJson<InventoryItem[]>("getItems");
+  const response = await requestJson<InventoryItem[] | { data: InventoryItem[] }>("getItems");
+  return Array.isArray(response) ? response : response.data;
 }
 
 export async function createItem(payload: InventoryItemInput): Promise<InventoryItem> {
