@@ -1,4 +1,10 @@
-export type ItemCategory = "General" | "Beverages" | "Snacks" | "Household" | "Personal Care";
+export type ItemCategory =
+  | "Engine Oil"
+  | "Brake System"
+  | "Filters"
+  | "Tyres"
+  | "Electrical"
+  | "General";
 
 export interface InventoryItem {
   id: string;

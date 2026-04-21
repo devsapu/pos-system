@@ -4,6 +4,46 @@ const SHEET_NAMES = {
   SALES: "sales",
   VENDORS: "vendors",
 };
+const SHEET_HEADERS = {
+  items: ["id", "name", "brand", "category", "purchasePrice", "sellingPrice", "quantity"],
+  sales: ["transactionId", "itemId", "quantity", "sellingPrice", "purchasePrice", "profit", "createdAt"],
+  vendors: ["vendorId", "name", "contact"],
+};
+
+function setupSheets() {
+  const spreadsheet = SpreadsheetApp.openById(SHEET_ID);
+  const result = {};
+
+  Object.keys(SHEET_HEADERS).forEach(function (sheetName) {
+    const expectedHeaders = SHEET_HEADERS[sheetName];
+    let sheet = spreadsheet.getSheetByName(sheetName);
+
+    if (!sheet) {
+      sheet = spreadsheet.insertSheet(sheetName);
+      result[sheetName] = "created";
+    } else {
+      result[sheetName] = "updated";
+    }
+
+    const currentHeaders = sheet
+      .getRange(1, 1, 1, expectedHeaders.length)
+      .getValues()[0]
+      .map(function (value) {
+        return String(value).trim();
+      });
+
+    const needsHeaderUpdate = expectedHeaders.some(function (header, index) {
+      return currentHeaders[index] !== header;
+    });
+
+    if (needsHeaderUpdate) {
+      sheet.getRange(1, 1, 1, expectedHeaders.length).setValues([expectedHeaders]);
+    }
+  });
+
+  Logger.log("setupSheets completed: " + JSON.stringify(result));
+  return result;
+}
 
 function doGet(e) {
   try {

@@ -9,12 +9,12 @@ import { Input } from "@/components/ui/input";
 import { inventoryService } from "@/services/inventory-service";
 import { InventoryItem, InventoryItemInput, ItemCategory } from "@/types/inventory";
 
-const categories: ItemCategory[] = ["General", "Beverages", "Snacks", "Household", "Personal Care"];
+const categories: ItemCategory[] = ["Engine Oil", "Brake System", "Filters", "Tyres", "Electrical", "General"];
 
 const initialForm: InventoryItemInput = {
   name: "",
   brand: "",
-  category: "General",
+  category: "Engine Oil",
   purchasePrice: 0,
   sellingPrice: 0,
   quantity: 0,
