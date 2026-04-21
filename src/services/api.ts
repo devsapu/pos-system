@@ -17,7 +17,8 @@ async function requestJson<T>(action: string, body?: unknown): Promise<T> {
 
   const response = await fetch(url.toString(), {
     method: body ? "POST" : "GET",
-    headers: body ? { "Content-Type": "application/json" } : undefined,
+    // Avoid JSON content-type to prevent Apps Script CORS preflight failures.
+    // Apps Script can still parse JSON from e.postData.contents.
     body: body ? JSON.stringify({ action, ...body }) : undefined,
     cache: "no-store",
   });
