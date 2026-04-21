@@ -12,13 +12,12 @@ const ensureApiUrl = (): string => {
 };
 
 async function requestJson<T>(action: string, body?: unknown): Promise<T> {
-  const url = new URL(ensureApiUrl());
-  url.searchParams.set("action", action);
+  ensureApiUrl();
+  const url = `/api/gas?action=${encodeURIComponent(action)}`;
 
-  const response = await fetch(url.toString(), {
+  const response = await fetch(url, {
     method: body ? "POST" : "GET",
-    // Avoid JSON content-type to prevent Apps Script CORS preflight failures.
-    // Apps Script can still parse JSON from e.postData.contents.
+    headers: body ? { "Content-Type": "application/json" } : undefined,
     body: body ? JSON.stringify({ action, ...body }) : undefined,
     cache: "no-store",
   });
