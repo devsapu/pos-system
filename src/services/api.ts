@@ -34,8 +34,24 @@ export function hasApiUrl(): boolean {
 }
 
 export async function getItems(): Promise<InventoryItem[]> {
-  const response = await requestJson<InventoryItem[] | { data: InventoryItem[] }>("getItems");
-  return Array.isArray(response) ? response : response.data;
+  const response = await requestJson<InventoryItem[] | { data?: InventoryItem[]; [key: string]: unknown }>("getItems");
+
+  if (Array.isArray(response)) {
+    return response;
+  }
+
+  if (Array.isArray(response.data)) {
+    return response.data;
+  }
+
+  // Backward compatibility for legacy Apps Script shape:
+  // { "0": {...}, "1": {...}, "statusCode": 200 }
+  const indexedRows = Object.keys(response)
+    .filter((key) => /^\d+$/.test(key))
+    .sort((a, b) => Number(a) - Number(b))
+    .map((key) => response[key] as InventoryItem);
+
+  return indexedRows;
 }
 
 export async function createItem(payload: InventoryItemInput): Promise<InventoryItem> {
